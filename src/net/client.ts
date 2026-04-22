@@ -10,6 +10,8 @@ import {
 } from './messages';
 import { getRoomKey, isValidRoomKey } from './room';
 
+const LOCAL_PARTYKIT_HOST = '127.0.0.1:1999';
+
 export type PartyStateSnapshot = {
   players: Record<string, PlayerState>;
   selfId: string | null;
@@ -148,8 +150,14 @@ export class PartyClient {
 }
 
 function resolvePartyHost(): string {
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    return '127.0.0.1:1999';
+  const configuredHost = import.meta.env.VITE_PARTYKIT_HOST?.trim();
+
+  if (configuredHost) {
+    return configuredHost;
+  }
+
+  if (import.meta.env.DEV) {
+    return LOCAL_PARTYKIT_HOST;
   }
 
   return window.location.host;

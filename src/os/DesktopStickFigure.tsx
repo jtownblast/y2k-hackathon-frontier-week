@@ -559,7 +559,7 @@ export default function DesktopStickFigure({ floorOffset = 0 }: Props) {
 
     const updateStateFromInput = () => {
       const jumpPressed = pressed.has('Space');
-      const attackPressed = pressed.has('Enter');
+      const attackPressed = pressed.has('KeyK');
       const dropPressed = pressed.has('ArrowDown') || pressed.has('KeyS');
       const walkHeld = isWalkHeld();
       const groundedSurface = getStoredGroundedSurface();
@@ -822,7 +822,7 @@ export default function DesktopStickFigure({ floorOffset = 0 }: Props) {
         return;
       }
 
-      if (event.code === 'Space' || event.code === 'Enter' || event.code === 'ArrowDown') {
+      if (event.code === 'Space' || event.code === 'KeyK' || event.code === 'ArrowDown') {
         event.preventDefault();
       }
 
@@ -834,7 +834,7 @@ export default function DesktopStickFigure({ floorOffset = 0 }: Props) {
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
-      if (event.code === 'Space' || event.code === 'Enter' || event.code === 'ArrowDown') {
+      if (event.code === 'Space' || event.code === 'KeyK' || event.code === 'ArrowDown') {
         event.preventDefault();
       }
 

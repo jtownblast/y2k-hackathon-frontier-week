@@ -8,6 +8,7 @@
     "dev:vite": "vite",
     "dev:party": "partykit dev",
     "build": "tsc -b && vite build",
+    "deploy": "vite build && partykit deploy",
     "preview": "vite preview"
   },
   "dependencies": {
