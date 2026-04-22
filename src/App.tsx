@@ -4,6 +4,7 @@ import BootScreen from './os/BootScreen';
 import Desktop from './os/Desktop';
 import DesktopStickFigure from './os/DesktopStickFigure';
 import ShutDownScreen from './os/ShutDownScreen';
+import MediaPlayerHost from './os/MediaPlayerHost';
 import { TASKBAR_HEIGHT } from './os/useWindows';
 import { useParty } from './net/useParty';
 import { useWindowSync } from './net/useWindowSync';
@@ -38,6 +39,7 @@ export default function App() {
         }}
       >
         <Desktop />
+        <MediaPlayerHost />
       </div>
       {desktopVisible && <DesktopStickFigure floorOffset={TASKBAR_HEIGHT} />}
     </>
