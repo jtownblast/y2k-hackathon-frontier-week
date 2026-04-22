@@ -13,6 +13,7 @@ interface Props {
 
 const MIN_WIDTH = 240;
 const MIN_HEIGHT = 140;
+const WINDOW_SYNC_INTERVAL_MS = 33;
 
 export default function Window({ window: win, zIndex, focused, children }: Props) {
   const { focusWindow, closeWindow, moveWindow, resizeWindow, minimizeWindow, toggleMaximize } =
@@ -26,7 +27,8 @@ export default function Window({ window: win, zIndex, focused, children }: Props
   const showMaximize = windowOptions?.showMaximize ?? true;
   const showBody = windowOptions?.showBody ?? true;
 
-  const dragStartRef = useRef<{ x: number; y: number } | null>(null);
+  const moveThrottleRef = useRef(0);
+  const resizeThrottleRef = useRef(0);
 
   if (win.isMinimized) return null;
 
@@ -43,6 +45,43 @@ export default function Window({ window: win, zIndex, focused, children }: Props
     toggleMaximize(win.id);
   };
 
+  const clampPosition = (x: number, y: number) => {
+    const maxY = (globalThis.window.innerHeight ?? 0) - TASKBAR_HEIGHT - 24;
+
+    return {
+      x: Math.max(0, x),
+      y: Math.min(Math.max(0, y), Math.max(0, maxY)),
+    };
+  };
+
+  const shouldSync = (lastSentAtRef: React.MutableRefObject<number>) => {
+    const now = performance.now();
+
+    if (now - lastSentAtRef.current < WINDOW_SYNC_INTERVAL_MS) {
+      return false;
+    }
+
+    lastSentAtRef.current = now;
+    return true;
+  };
+
+  const syncMove = (x: number, y: number, force = false) => {
+    if (!force && !shouldSync(moveThrottleRef)) {
+      return;
+    }
+
+    const nextPosition = clampPosition(x, y);
+    moveWindow(win.id, nextPosition.x, nextPosition.y);
+  };
+
+  const syncResize = (x: number, y: number, width: number, height: number, force = false) => {
+    if (!force && !shouldSync(resizeThrottleRef)) {
+      return;
+    }
+
+    resizeWindow(win.id, x, y, width, height);
+  };
+
   return (
     <Rnd
       position={{ x: win.x, y: win.y }}
@@ -53,25 +92,25 @@ export default function Window({ window: win, zIndex, focused, children }: Props
       dragHandleClassName="title-bar"
       disableDragging={win.isMaximized}
       enableResizing={!win.isMaximized && resizable}
-      onDragStart={(_e, d) => {
-        dragStartRef.current = { x: d.x, y: d.y };
+      onDragStart={() => {
+        moveThrottleRef.current = 0;
         focusWindow(win.id);
       }}
+      onDrag={(_e, d) => {
+        syncMove(d.x, d.y);
+      }}
       onDragStop={(_e, d) => {
-        const start = dragStartRef.current;
-        dragStartRef.current = null;
-        if (start && start.x === d.x && start.y === d.y) return;
-        const maxY = (globalThis.window.innerHeight ?? 0) - TASKBAR_HEIGHT - 24;
-        moveWindow(win.id, Math.max(0, d.x), Math.min(Math.max(0, d.y), Math.max(0, maxY)));
+        syncMove(d.x, d.y, true);
+      }}
+      onResizeStart={() => {
+        resizeThrottleRef.current = 0;
+        focusWindow(win.id);
+      }}
+      onResize={(_e, _dir, ref, _delta, position) => {
+        syncResize(position.x, position.y, ref.offsetWidth, ref.offsetHeight);
       }}
       onResizeStop={(_e, _dir, ref, _delta, position) => {
-        resizeWindow(
-          win.id,
-          position.x,
-          position.y,
-          ref.offsetWidth,
-          ref.offsetHeight,
-        );
+        syncResize(position.x, position.y, ref.offsetWidth, ref.offsetHeight, true);
       }}
       style={{ zIndex, display: 'flex', flexDirection: 'column' }}
       onMouseDown={() => focusWindow(win.id)}

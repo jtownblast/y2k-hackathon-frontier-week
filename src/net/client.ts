@@ -1,12 +1,16 @@
 import PartySocket from 'partysocket';
 
 import {
+  type AttackMessage,
   isServerMsg,
   type ActionName,
   type Facing,
   type MoveMessage,
   type PlayerState,
   type ServerMsg,
+  type WindowClientMessage,
+  type WindowServerMessage,
+  type WindowSnapshotMessage,
 } from './messages';
 import { getRoomKey, isValidRoomKey } from './room';
 
@@ -18,16 +22,21 @@ export type PartyStateSnapshot = {
 };
 
 type StateListener = (snapshot: PartyStateSnapshot) => void;
+type AttackListener = (message: AttackMessage) => void;
+type WindowListener = (message: WindowServerMessage) => void;
 
 export class PartyClient {
   readonly roomKey: string;
 
   private readonly socket: PartySocket;
   private readonly listeners = new Set<StateListener>();
+  private readonly attackListeners = new Set<AttackListener>();
+  private readonly windowListeners = new Set<WindowListener>();
   private snapshot: PartyStateSnapshot = {
     players: {},
     selfId: null,
   };
+  private latestWindowSnapshot: WindowSnapshotMessage | null = null;
 
   constructor(roomKey = getRoomKey()) {
     this.roomKey = isValidRoomKey(roomKey) ? roomKey : getRoomKey();
@@ -46,6 +55,26 @@ export class PartyClient {
 
     return () => {
       this.listeners.delete(listener);
+    };
+  }
+
+  onAttack(listener: AttackListener): () => void {
+    this.attackListeners.add(listener);
+
+    return () => {
+      this.attackListeners.delete(listener);
+    };
+  }
+
+  onWindowMessage(listener: WindowListener): () => void {
+    this.windowListeners.add(listener);
+
+    if (this.latestWindowSnapshot !== null) {
+      listener(this.latestWindowSnapshot);
+    }
+
+    return () => {
+      this.windowListeners.delete(listener);
     };
   }
 
@@ -72,14 +101,40 @@ export class PartyClient {
     this.socket.send(JSON.stringify(message));
   }
 
+  sendAttack(x: number, y: number, facing: Facing): void {
+    if (this.socket.readyState !== WebSocket.OPEN) {
+      return;
+    }
+
+    const message: AttackMessage = {
+      type: 'attack',
+      x,
+      y,
+      facing,
+    };
+
+    this.socket.send(JSON.stringify(message));
+  }
+
+  sendWindowMessage(message: WindowClientMessage): void {
+    if (this.socket.readyState !== WebSocket.OPEN) {
+      return;
+    }
+
+    this.socket.send(JSON.stringify(message));
+  }
+
   disconnect(): void {
     this.socket.removeEventListener('message', this.handleMessage);
     this.socket.close();
     this.listeners.clear();
+    this.attackListeners.clear();
+    this.windowListeners.clear();
     this.snapshot = {
       players: {},
       selfId: null,
     };
+    this.latestWindowSnapshot = null;
   }
 
   private readonly handleMessage = (event: MessageEvent): void => {
@@ -99,18 +154,19 @@ export class PartyClient {
       return;
     }
 
-    this.applyMessage(payload);
-    this.emitState();
+    if (this.applyMessage(payload)) {
+      this.emitState();
+    }
   };
 
-  private applyMessage(message: ServerMsg): void {
+  private applyMessage(message: ServerMsg): boolean {
     switch (message.type) {
       case 'hello':
         this.snapshot = {
           selfId: message.self.id,
           players: toPlayerRecord(message.players),
         };
-        break;
+        return true;
       case 'join':
         this.snapshot = {
           ...this.snapshot,
@@ -119,13 +175,13 @@ export class PartyClient {
             [message.player.id]: message.player,
           },
         };
-        break;
+        return true;
       case 'state':
         this.snapshot = {
           ...this.snapshot,
           players: toPlayerRecord(message.players),
         };
-        break;
+        return true;
       case 'leave': {
         const nextPlayers = { ...this.snapshot.players };
         delete nextPlayers[message.id];
@@ -135,10 +191,38 @@ export class PartyClient {
           selfId: this.snapshot.selfId === message.id ? null : this.snapshot.selfId,
           players: nextPlayers,
         };
-        break;
+        return true;
       }
+      case 'attack':
+        this.emitAttack(message);
+        return false;
+      case 'window-snapshot':
+        this.latestWindowSnapshot = message;
+        this.emitWindowMessage(message);
+        return false;
+      case 'window-open':
+      case 'window-move':
+      case 'window-resize':
+      case 'window-close':
+      case 'window-focus':
+      case 'window-minimize':
+      case 'window-maximize':
+        this.emitWindowMessage(message);
+        return false;
       default:
-        break;
+        return false;
+    }
+  }
+
+  private emitAttack(message: AttackMessage): void {
+    for (const listener of this.attackListeners) {
+      listener(message);
+    }
+  }
+
+  private emitWindowMessage(message: WindowServerMessage): void {
+    for (const listener of this.windowListeners) {
+      listener(message);
     }
   }
 

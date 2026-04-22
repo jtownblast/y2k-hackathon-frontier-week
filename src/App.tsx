@@ -6,6 +6,7 @@ import DesktopStickFigure from './os/DesktopStickFigure';
 import ShutDownScreen from './os/ShutDownScreen';
 import { TASKBAR_HEIGHT } from './os/useWindows';
 import { useParty } from './net/useParty';
+import { useWindowSync } from './net/useWindowSync';
 
 export default function App() {
   const booted = useOS((s) => s.booted);
@@ -13,6 +14,7 @@ export default function App() {
 
   // App owns the single PartyKit connection so child surfaces can share the store without double-subscribing.
   useParty();
+  useWindowSync();
 
   const [desktopVisible, setDesktopVisible] = useState(false);
   useEffect(() => {

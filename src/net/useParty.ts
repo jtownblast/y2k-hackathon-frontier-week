@@ -1,7 +1,13 @@
 import { useEffect, useRef } from 'react';
 
 import { PartyClient } from './client';
-import type { ActionName, Facing } from './messages';
+import type {
+  ActionName,
+  AttackMessage,
+  Facing,
+  WindowClientMessage,
+  WindowServerMessage,
+} from './messages';
 import { getRoomKey } from './room';
 import { usePartyStore } from './usePartyStore';
 
@@ -12,6 +18,8 @@ type SharedClientEntry = {
 };
 
 const sharedClients = new Map<string, SharedClientEntry>();
+type AttackHandler = (message: AttackMessage) => void;
+type WindowHandler = (message: WindowServerMessage) => void;
 
 export function useParty(): void {
   const roomKey = useRef(getRoomKey()).current;
@@ -40,6 +48,60 @@ export function usePartySendMove(): (
   return (x, y, facing, action, frameIndex) => {
     sharedClients.get(roomKey)?.client.sendMove(x, y, facing, action, frameIndex);
   };
+}
+
+export function usePartySendAttack(): (x: number, y: number, facing: Facing) => void {
+  const roomKey = useRef(getRoomKey()).current;
+
+  return (x, y, facing) => {
+    sharedClients.get(roomKey)?.client.sendAttack(x, y, facing);
+  };
+}
+
+export function sendPartyWindowMessage(message: WindowClientMessage): void {
+  sharedClients.get(getRoomKey())?.client.sendWindowMessage(message);
+}
+
+export function usePartyOnAttack(handler: AttackHandler): void {
+  const roomKey = useRef(getRoomKey()).current;
+  const handlerRef = useRef(handler);
+
+  useEffect(() => {
+    handlerRef.current = handler;
+  }, [handler]);
+
+  useEffect(() => {
+    const client = acquireClient(roomKey);
+    const unsubscribe = client.onAttack((message) => {
+      handlerRef.current(message);
+    });
+
+    return () => {
+      unsubscribe();
+      releaseClient(roomKey);
+    };
+  }, [roomKey]);
+}
+
+export function usePartyOnWindowMessage(handler: WindowHandler): void {
+  const roomKey = useRef(getRoomKey()).current;
+  const handlerRef = useRef(handler);
+
+  useEffect(() => {
+    handlerRef.current = handler;
+  }, [handler]);
+
+  useEffect(() => {
+    const client = acquireClient(roomKey);
+    const unsubscribe = client.onWindowMessage((message) => {
+      handlerRef.current(message);
+    });
+
+    return () => {
+      unsubscribe();
+      releaseClient(roomKey);
+    };
+  }, [roomKey]);
 }
 
 function acquireClient(roomKey: string): PartyClient {

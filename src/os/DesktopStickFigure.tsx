@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 
 import sprite from '../assets/sprites/stickfigure_filled.svg';
-import type { PlayerState } from '../net/messages';
-import { usePartySendMove } from '../net/useParty';
+import type { AttackMessage, PlayerState } from '../net/messages';
+import { usePartyOnAttack, usePartySendAttack, usePartySendMove } from '../net/useParty';
 import { usePartyStore } from '../net/usePartyStore';
 
 type AnimationName = 'idle' | 'walk' | 'jump' | 'attack';
@@ -59,6 +59,12 @@ const JUMP_VELOCITY = -0.6 * Math.SQRT2;
 const WALK_SPEED = 0.12;
 const AIR_SPEED = WALK_SPEED * 0.6;
 const MAX_FALL_SPEED = 1.15;
+const KNOCKBACK_VX = 0.6;
+const KNOCKBACK_VY = 0.35;
+const ATTACK_HITBOX_FORWARD_RANGE = 56;
+const ATTACK_HITBOX_BODY_OVERLAP = 20;
+const ATTACK_HITBOX_HEIGHT = 96;
+const ATTACK_HITBOX_VERTICAL_INSET = 12;
 const BROADCAST_INTERVAL_MS = 34;
 const SURFACE_FLOOR_ID = 'fallback-floor';
 const SURFACE_SNAP_TOLERANCE = 1;
@@ -112,15 +118,23 @@ export default function DesktopStickFigure({ floorOffset = 0 }: Props) {
   const selfId = usePartyStore((state) => state.selfId);
   const players = usePartyStore((state) => state.players);
   const sendMove = usePartySendMove();
+  const sendAttack = usePartySendAttack();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const frameRef = useRef<number | null>(null);
   const sendMoveRef = useRef(sendMove);
+  const sendAttackRef = useRef(sendAttack);
   const selfIdRef = useRef<string | null>(selfId);
   const remotePlayersRef = useRef<PlayerState[]>([]);
+  const incomingAttacksRef = useRef<AttackMessage[]>([]);
 
   useEffect(() => {
     sendMoveRef.current = sendMove;
-  }, [sendMove]);
+    sendAttackRef.current = sendAttack;
+  }, [sendAttack, sendMove]);
+
+  usePartyOnAttack((message) => {
+    incomingAttacksRef.current.push(message);
+  });
 
   useEffect(() => {
     selfIdRef.current = selfId;
@@ -557,6 +571,68 @@ export default function DesktopStickFigure({ floorOffset = 0 }: Props) {
       }
     };
 
+    const toCanvasPosition = (x: number, y: number) => ({
+      x: denormalizePosition(x, getMaxX()),
+      y: denormalizePosition(y, getFloorSurfaceY()) - PLAYER_DRAW_H,
+    });
+
+    const getAttackHitbox = (attack: AttackMessage) => {
+      const attacker = toCanvasPosition(attack.x, attack.y);
+      const top = attacker.y + ATTACK_HITBOX_VERTICAL_INSET;
+      const bottom = top + ATTACK_HITBOX_HEIGHT;
+      const width = ATTACK_HITBOX_FORWARD_RANGE + ATTACK_HITBOX_BODY_OVERLAP;
+
+      if (attack.facing === 'right') {
+        const left = attacker.x + PLAYER_DRAW_W - ATTACK_HITBOX_BODY_OVERLAP;
+        return { left, right: left + width, top, bottom };
+      }
+
+      const right = attacker.x + ATTACK_HITBOX_BODY_OVERLAP;
+      return { left: right - width, right, top, bottom };
+    };
+
+    const applyKnockbackFromAttack = (attack: AttackMessage) => {
+      if (!hasSpawned) {
+        return;
+      }
+
+      const hitbox = getAttackHitbox(attack);
+
+      if (
+        !rangesOverlap(hitbox.left, hitbox.right, getPlayerLeft(), getPlayerRight()) ||
+        !rangesOverlap(hitbox.top, hitbox.bottom, getPlayerHeadY(), getPlayerFootY())
+      ) {
+        return;
+      }
+
+      const groundedSurface = getStoredGroundedSurface();
+
+      if (groundedSurface !== null) {
+        ignoredSurfaceIds.add(groundedSurface.id);
+      }
+
+      detachFromSurface();
+
+      if (player.state !== 'jump') {
+        setState('jump');
+      }
+
+      player.vx += attack.facing === 'right' ? KNOCKBACK_VX : -KNOCKBACK_VX;
+      player.vy = Math.min(player.vy, 0) - KNOCKBACK_VY;
+    };
+
+    const applyPendingAttacks = () => {
+      if (incomingAttacksRef.current.length === 0) {
+        return;
+      }
+
+      const pendingAttacks = incomingAttacksRef.current.splice(0, incomingAttacksRef.current.length);
+
+      for (const attack of pendingAttacks) {
+        applyKnockbackFromAttack(attack);
+      }
+    };
+
     const updateStateFromInput = () => {
       const jumpPressed = pressed.has('Space');
       const attackPressed = pressed.has('KeyK');
@@ -581,6 +657,11 @@ export default function DesktopStickFigure({ floorOffset = 0 }: Props) {
       if ((player.state === 'idle' || player.state === 'walk') && attackPressed && player.grounded) {
         setState('attack');
         player.vx = 0;
+        sendAttackRef.current(
+          normalizePosition(player.x, getMaxX()),
+          normalizePosition(getPlayerFootY(), getFloorSurfaceY()),
+          player.facing,
+        );
         return;
       }
 
@@ -688,6 +769,7 @@ export default function DesktopStickFigure({ floorOffset = 0 }: Props) {
 
     const update = (dt: number) => {
       updateStateFromInput();
+      applyPendingAttacks();
       updatePhysics(dt);
       tickAnimation(dt);
       updateStateAfterPhysics();
@@ -731,10 +813,8 @@ export default function DesktopStickFigure({ floorOffset = 0 }: Props) {
       lastBroadcastFrameIndex = player.frameIndex;
     };
 
-    const toRemoteCanvasPosition = (remotePlayer: PlayerState) => ({
-      x: denormalizePosition(remotePlayer.x, getMaxX()),
-      y: denormalizePosition(remotePlayer.y, getFloorSurfaceY()) - PLAYER_DRAW_H,
-    });
+    const toRemoteCanvasPosition = (remotePlayer: PlayerState) =>
+      toCanvasPosition(remotePlayer.x, remotePlayer.y);
 
     const drawLocalPlaceholder = (dx: number, dy: number) => {
       context.save();
