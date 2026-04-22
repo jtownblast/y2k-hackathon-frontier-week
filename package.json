@@ -4,22 +4,29 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently -n vite,party -c blue,magenta \"npm run dev:vite\" \"npm run dev:party\"",
+    "dev:vite": "vite",
+    "dev:party": "partykit dev",
     "build": "tsc -b && vite build",
+    "deploy": "vite build && partykit deploy",
     "preview": "vite preview"
   },
   "dependencies": {
     "98.css": "^0.1.20",
+    "partysocket": "^1.1.18",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-rnd": "^10.4.13",
     "zustand": "^4.5.5"
   },
   "devDependencies": {
+    "@types/node": "^25.6.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",
     "autoprefixer": "^10.4.20",
+    "concurrently": "^9.2.1",
+    "partykit": "^0.0.115",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
     "typescript": "^5.6.3",

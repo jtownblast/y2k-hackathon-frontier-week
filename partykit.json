@@ -1,0 +1,6 @@
+{
+  "name": "y2k-os-party",
+  "main": "party/server.ts",
+  "serve": "dist",
+  "compatibilityDate": "2026-01-01"
+}

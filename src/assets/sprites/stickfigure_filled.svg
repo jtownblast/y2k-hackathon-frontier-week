@@ -1,0 +1,458 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="256" viewBox="0 0 512 256" role="img" aria-labelledby="filled-title filled-desc">
+  <title id="filled-title">Filled stick-figure spritesheet first pass</title>
+  <desc id="filled-desc">A first-pass 512 by 256 four-row stick-figure spritesheet showing idle, walk, jump, and attack poses drawn into the used cells of the combined template.</desc>
+  <defs>
+    <style>
+      .bg,
+      .grid,
+      .crosshair,
+      .ground,
+      .frame-label,
+      .sheet-label,
+      .unused-fill,
+      .unused-hatch,
+      .unused-label,
+      .hatch { display: none; }
+      .figure-stroke {
+        fill: none;
+        stroke: #111;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        vector-effect: non-scaling-stroke;
+      }
+    </style>
+    <pattern id="unused-hatch-pattern" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+      <line class="hatch" x1="0" y1="0" x2="0" y2="8" />
+    </pattern>
+  </defs>
+  <rect class="bg" x="0" y="0" width="512" height="256" />
+
+  <g transform="translate(256 0)">
+    <rect class="unused-fill" x="0.5" y="0.5" width="63" height="63" />
+    <rect class="unused-hatch" x="0.5" y="0.5" width="63" height="63" />
+    <text class="unused-label" x="32" y="32">—</text>
+  </g>
+  <g transform="translate(320 0)">
+    <rect class="unused-fill" x="0.5" y="0.5" width="63" height="63" />
+    <rect class="unused-hatch" x="0.5" y="0.5" width="63" height="63" />
+    <text class="unused-label" x="32" y="32">—</text>
+  </g>
+  <g transform="translate(384 0)">
+    <rect class="unused-fill" x="0.5" y="0.5" width="63" height="63" />
+    <rect class="unused-hatch" x="0.5" y="0.5" width="63" height="63" />
+    <text class="unused-label" x="32" y="32">—</text>
+  </g>
+  <g transform="translate(448 0)">
+    <rect class="unused-fill" x="0.5" y="0.5" width="63" height="63" />
+    <rect class="unused-hatch" x="0.5" y="0.5" width="63" height="63" />
+    <text class="unused-label" x="32" y="32">—</text>
+  </g>
+  <g transform="translate(384 128)">
+    <rect class="unused-fill" x="0.5" y="0.5" width="63" height="63" />
+    <rect class="unused-hatch" x="0.5" y="0.5" width="63" height="63" />
+    <text class="unused-label" x="32" y="32">—</text>
+  </g>
+  <g transform="translate(448 128)">
+    <rect class="unused-fill" x="0.5" y="0.5" width="63" height="63" />
+    <rect class="unused-hatch" x="0.5" y="0.5" width="63" height="63" />
+    <text class="unused-label" x="32" y="32">—</text>
+  </g>
+  <g transform="translate(384 192)">
+    <rect class="unused-fill" x="0.5" y="0.5" width="63" height="63" />
+    <rect class="unused-hatch" x="0.5" y="0.5" width="63" height="63" />
+    <text class="unused-label" x="32" y="32">—</text>
+  </g>
+  <g transform="translate(448 192)">
+    <rect class="unused-fill" x="0.5" y="0.5" width="63" height="63" />
+    <rect class="unused-hatch" x="0.5" y="0.5" width="63" height="63" />
+    <text class="unused-label" x="32" y="32">—</text>
+  </g>
+
+  <rect class="grid" x="0.5" y="0.5" width="511" height="255" />
+  <line class="grid" x1="64.5" y1="0.5" x2="64.5" y2="255.5" />
+  <line class="grid" x1="128.5" y1="0.5" x2="128.5" y2="255.5" />
+  <line class="grid" x1="192.5" y1="0.5" x2="192.5" y2="255.5" />
+  <line class="grid" x1="256.5" y1="0.5" x2="256.5" y2="255.5" />
+  <line class="grid" x1="320.5" y1="0.5" x2="320.5" y2="255.5" />
+  <line class="grid" x1="384.5" y1="0.5" x2="384.5" y2="255.5" />
+  <line class="grid" x1="448.5" y1="0.5" x2="448.5" y2="255.5" />
+  <line class="grid" x1="0.5" y1="64.5" x2="511.5" y2="64.5" />
+  <line class="grid" x1="0.5" y1="128.5" x2="511.5" y2="128.5" />
+  <line class="grid" x1="0.5" y1="192.5" x2="511.5" y2="192.5" />
+
+  <g transform="translate(0 0)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">0</text>
+  </g>
+  <g transform="translate(64 0)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">1</text>
+  </g>
+  <g transform="translate(128 0)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">2</text>
+  </g>
+  <g transform="translate(192 0)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">3</text>
+  </g>
+
+  <g transform="translate(0 64)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">0</text>
+  </g>
+  <g transform="translate(64 64)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">1</text>
+  </g>
+  <g transform="translate(128 64)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">2</text>
+  </g>
+  <g transform="translate(192 64)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">3</text>
+  </g>
+  <g transform="translate(256 64)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">4</text>
+  </g>
+  <g transform="translate(320 64)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">5</text>
+  </g>
+  <g transform="translate(384 64)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">6</text>
+  </g>
+  <g transform="translate(448 64)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">7</text>
+  </g>
+
+  <g transform="translate(0 128)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">0</text>
+  </g>
+  <g transform="translate(64 128)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">1</text>
+  </g>
+  <g transform="translate(128 128)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">2</text>
+  </g>
+  <g transform="translate(192 128)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">3</text>
+  </g>
+  <g transform="translate(256 128)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">4</text>
+  </g>
+  <g transform="translate(320 128)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">5</text>
+  </g>
+
+  <g transform="translate(0 192)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">0</text>
+  </g>
+  <g transform="translate(64 192)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">1</text>
+  </g>
+  <g transform="translate(128 192)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">2</text>
+  </g>
+  <g transform="translate(192 192)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">3</text>
+  </g>
+  <g transform="translate(256 192)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">4</text>
+  </g>
+  <g transform="translate(320 192)">
+    <line class="crosshair" x1="32.5" y1="0.5" x2="32.5" y2="63.5" />
+    <line class="crosshair" x1="0.5" y1="32.5" x2="63.5" y2="32.5" />
+    <line class="ground" x1="4.5" y1="56.5" x2="59.5" y2="56.5" />
+    <text class="frame-label" x="4" y="4">5</text>
+  </g>
+
+  <g id="figure-poses">
+    <!-- IDLE frame 0 -->
+    <g id="idle-f0" transform="translate(0 0)">
+      <circle class="figure-stroke" cx="32" cy="23" r="6" />
+      <line class="figure-stroke" x1="32" y1="29" x2="32" y2="41" />
+      <line class="figure-stroke" x1="32" y1="34" x2="26" y2="41" />
+      <line class="figure-stroke" x1="32" y1="34" x2="38" y2="41" />
+      <line class="figure-stroke" x1="32" y1="41" x2="27" y2="56" />
+      <line class="figure-stroke" x1="32" y1="41" x2="37" y2="56" />
+    </g>
+    <!-- IDLE frame 1 -->
+    <g id="idle-f1" transform="translate(64 0)">
+      <circle class="figure-stroke" cx="32" cy="22" r="6" />
+      <line class="figure-stroke" x1="32" y1="28" x2="32" y2="40" />
+      <line class="figure-stroke" x1="32" y1="33" x2="24" y2="41" />
+      <line class="figure-stroke" x1="32" y1="33" x2="40" y2="41" />
+      <line class="figure-stroke" x1="32" y1="40" x2="27" y2="56" />
+      <line class="figure-stroke" x1="32" y1="40" x2="37" y2="56" />
+    </g>
+    <!-- IDLE frame 2 -->
+    <g id="idle-f2" transform="translate(128 0)">
+      <circle class="figure-stroke" cx="32" cy="23" r="6" />
+      <line class="figure-stroke" x1="32" y1="29" x2="32" y2="41" />
+      <line class="figure-stroke" x1="32" y1="34" x2="26" y2="41" />
+      <line class="figure-stroke" x1="32" y1="34" x2="38" y2="41" />
+      <line class="figure-stroke" x1="32" y1="41" x2="27" y2="56" />
+      <line class="figure-stroke" x1="32" y1="41" x2="37" y2="56" />
+    </g>
+    <!-- IDLE frame 3 -->
+    <g id="idle-f3" transform="translate(192 0)">
+      <circle class="figure-stroke" cx="32" cy="24" r="6" />
+      <line class="figure-stroke" x1="32" y1="30" x2="32" y2="42" />
+      <line class="figure-stroke" x1="32" y1="35" x2="28" y2="41" />
+      <line class="figure-stroke" x1="32" y1="35" x2="36" y2="41" />
+      <line class="figure-stroke" x1="32" y1="42" x2="27" y2="56" />
+      <line class="figure-stroke" x1="32" y1="42" x2="37" y2="56" />
+    </g>
+
+    <!-- WALK frame 0 -->
+    <g id="walk-f0" transform="translate(0 64)">
+      <circle class="figure-stroke" cx="35" cy="25" r="6" />
+      <line class="figure-stroke" x1="34" y1="31" x2="31" y2="41" />
+      <line class="figure-stroke" x1="34" y1="35" x2="26" y2="40" />
+      <line class="figure-stroke" x1="34" y1="35" x2="42" y2="32" />
+      <line class="figure-stroke" x1="31" y1="41" x2="39" y2="56" />
+      <line class="figure-stroke" x1="31" y1="41" x2="23" y2="56" />
+    </g>
+    <!-- WALK frame 1 -->
+    <g id="walk-f1" transform="translate(64 64)">
+      <circle class="figure-stroke" cx="35" cy="24" r="6" />
+      <line class="figure-stroke" x1="34" y1="30" x2="31" y2="41" />
+      <line class="figure-stroke" x1="34" y1="35" x2="28" y2="39" />
+      <line class="figure-stroke" x1="34" y1="35" x2="40" y2="34" />
+      <line class="figure-stroke" x1="31" y1="41" x2="36" y2="56" />
+      <line class="figure-stroke" x1="31" y1="41" x2="26" y2="56" />
+    </g>
+    <!-- WALK frame 2 -->
+    <g id="walk-f2" transform="translate(128 64)">
+      <circle class="figure-stroke" cx="35" cy="23" r="6" />
+      <line class="figure-stroke" x1="34" y1="29" x2="31" y2="40" />
+      <line class="figure-stroke" x1="34" y1="34" x2="30" y2="38" />
+      <line class="figure-stroke" x1="34" y1="34" x2="38" y2="34" />
+      <line class="figure-stroke" x1="31" y1="40" x2="34" y2="56" />
+      <line class="figure-stroke" x1="31" y1="40" x2="29" y2="56" />
+    </g>
+    <!-- WALK frame 3 -->
+    <g id="walk-f3" transform="translate(192 64)">
+      <circle class="figure-stroke" cx="35" cy="24" r="6" />
+      <line class="figure-stroke" x1="34" y1="30" x2="31" y2="41" />
+      <line class="figure-stroke" x1="34" y1="35" x2="40" y2="34" />
+      <line class="figure-stroke" x1="34" y1="35" x2="28" y2="39" />
+      <line class="figure-stroke" x1="31" y1="41" x2="26" y2="56" />
+      <line class="figure-stroke" x1="31" y1="41" x2="36" y2="56" />
+    </g>
+    <!-- WALK frame 4 -->
+    <g id="walk-f4" transform="translate(256 64)">
+      <circle class="figure-stroke" cx="35" cy="25" r="6" />
+      <line class="figure-stroke" x1="34" y1="31" x2="31" y2="41" />
+      <line class="figure-stroke" x1="34" y1="35" x2="42" y2="32" />
+      <line class="figure-stroke" x1="34" y1="35" x2="26" y2="40" />
+      <line class="figure-stroke" x1="31" y1="41" x2="23" y2="56" />
+      <line class="figure-stroke" x1="31" y1="41" x2="39" y2="56" />
+    </g>
+    <!-- WALK frame 5 -->
+    <g id="walk-f5" transform="translate(320 64)">
+      <circle class="figure-stroke" cx="35" cy="24" r="6" />
+      <line class="figure-stroke" x1="34" y1="30" x2="31" y2="41" />
+      <line class="figure-stroke" x1="34" y1="35" x2="40" y2="34" />
+      <line class="figure-stroke" x1="34" y1="35" x2="28" y2="39" />
+      <line class="figure-stroke" x1="31" y1="41" x2="26" y2="56" />
+      <line class="figure-stroke" x1="31" y1="41" x2="36" y2="56" />
+    </g>
+    <!-- WALK frame 6 -->
+    <g id="walk-f6" transform="translate(384 64)">
+      <circle class="figure-stroke" cx="35" cy="23" r="6" />
+      <line class="figure-stroke" x1="34" y1="29" x2="31" y2="40" />
+      <line class="figure-stroke" x1="34" y1="34" x2="38" y2="34" />
+      <line class="figure-stroke" x1="34" y1="34" x2="30" y2="38" />
+      <line class="figure-stroke" x1="31" y1="40" x2="34" y2="56" />
+      <line class="figure-stroke" x1="31" y1="40" x2="29" y2="56" />
+    </g>
+    <!-- WALK frame 7 -->
+    <g id="walk-f7" transform="translate(448 64)">
+      <circle class="figure-stroke" cx="35" cy="24" r="6" />
+      <line class="figure-stroke" x1="34" y1="30" x2="31" y2="41" />
+      <line class="figure-stroke" x1="34" y1="35" x2="28" y2="39" />
+      <line class="figure-stroke" x1="34" y1="35" x2="40" y2="34" />
+      <line class="figure-stroke" x1="31" y1="41" x2="36" y2="56" />
+      <line class="figure-stroke" x1="31" y1="41" x2="26" y2="56" />
+    </g>
+
+    <!-- JUMP frame 0 -->
+    <g id="jump-f0" transform="translate(0 128)">
+      <circle class="figure-stroke" cx="32" cy="28" r="6" />
+      <line class="figure-stroke" x1="32" y1="34" x2="32" y2="43" />
+      <line class="figure-stroke" x1="32" y1="37" x2="23" y2="39" />
+      <line class="figure-stroke" x1="32" y1="37" x2="26" y2="33" />
+      <line class="figure-stroke" x1="32" y1="43" x2="27" y2="56" />
+      <line class="figure-stroke" x1="32" y1="43" x2="38" y2="56" />
+    </g>
+    <!-- JUMP frame 1 -->
+    <g id="jump-f1" transform="translate(64 128)">
+      <circle class="figure-stroke" cx="32" cy="24" r="6" />
+      <line class="figure-stroke" x1="32" y1="30" x2="32" y2="41" />
+      <line class="figure-stroke" x1="32" y1="34" x2="27" y2="27" />
+      <line class="figure-stroke" x1="32" y1="34" x2="39" y2="24" />
+      <line class="figure-stroke" x1="32" y1="41" x2="29" y2="56" />
+      <line class="figure-stroke" x1="32" y1="41" x2="36" y2="56" />
+    </g>
+    <!-- JUMP frame 2 -->
+    <g id="jump-f2" transform="translate(128 128)">
+      <circle class="figure-stroke" cx="32" cy="20" r="6" />
+      <line class="figure-stroke" x1="32" y1="26" x2="32" y2="37" />
+      <line class="figure-stroke" x1="32" y1="30" x2="29" y2="20" />
+      <line class="figure-stroke" x1="32" y1="30" x2="40" y2="21" />
+      <line class="figure-stroke" x1="32" y1="37" x2="29" y2="49" />
+      <line class="figure-stroke" x1="32" y1="37" x2="36" y2="50" />
+    </g>
+    <!-- JUMP frame 3 -->
+    <g id="jump-f3" transform="translate(192 128)">
+      <circle class="figure-stroke" cx="32" cy="19" r="6" />
+      <line class="figure-stroke" x1="32" y1="25" x2="32" y2="35" />
+      <line class="figure-stroke" x1="32" y1="29" x2="24" y2="18" />
+      <line class="figure-stroke" x1="32" y1="29" x2="42" y2="18" />
+      <line class="figure-stroke" x1="32" y1="35" x2="30" y2="47" />
+      <line class="figure-stroke" x1="32" y1="35" x2="34" y2="47" />
+    </g>
+    <!-- JUMP frame 4 -->
+    <g id="jump-f4" transform="translate(256 128)">
+      <circle class="figure-stroke" cx="32" cy="21" r="6" />
+      <line class="figure-stroke" x1="32" y1="27" x2="32" y2="38" />
+      <line class="figure-stroke" x1="32" y1="31" x2="27" y2="28" />
+      <line class="figure-stroke" x1="32" y1="31" x2="39" y2="30" />
+      <line class="figure-stroke" x1="32" y1="38" x2="29" y2="53" />
+      <line class="figure-stroke" x1="32" y1="38" x2="36" y2="54" />
+    </g>
+    <!-- JUMP frame 5 -->
+    <g id="jump-f5" transform="translate(320 128)">
+      <circle class="figure-stroke" cx="32" cy="27" r="6" />
+      <line class="figure-stroke" x1="32" y1="33" x2="32" y2="43" />
+      <line class="figure-stroke" x1="32" y1="36" x2="37" y2="35" />
+      <line class="figure-stroke" x1="32" y1="36" x2="43" y2="39" />
+      <line class="figure-stroke" x1="32" y1="43" x2="27" y2="56" />
+      <line class="figure-stroke" x1="32" y1="43" x2="38" y2="56" />
+    </g>
+
+    <!-- ATTACK frame 0 -->
+    <g id="attack-f0" transform="translate(0 192)">
+      <circle class="figure-stroke" cx="32" cy="23" r="6" />
+      <line class="figure-stroke" x1="33" y1="29" x2="32" y2="41" />
+      <line class="figure-stroke" x1="33" y1="34" x2="27" y2="39" />
+      <line class="figure-stroke" x1="33" y1="34" x2="40" y2="36" />
+      <line class="figure-stroke" x1="32" y1="41" x2="28" y2="56" />
+      <line class="figure-stroke" x1="32" y1="41" x2="36" y2="56" />
+    </g>
+    <!-- ATTACK frame 1 -->
+    <g id="attack-f1" transform="translate(64 192)">
+      <circle class="figure-stroke" cx="31" cy="24" r="6" />
+      <line class="figure-stroke" x1="31" y1="30" x2="32" y2="41" />
+      <line class="figure-stroke" x1="31" y1="34" x2="23" y2="32" />
+      <line class="figure-stroke" x1="31" y1="34" x2="37" y2="37" />
+      <line class="figure-stroke" x1="32" y1="41" x2="27" y2="56" />
+      <line class="figure-stroke" x1="32" y1="41" x2="37" y2="56" />
+    </g>
+    <!-- ATTACK frame 2 -->
+    <g id="attack-f2" transform="translate(128 192)">
+      <circle class="figure-stroke" cx="30" cy="24" r="6" />
+      <line class="figure-stroke" x1="30" y1="30" x2="32" y2="41" />
+      <line class="figure-stroke" x1="30" y1="34" x2="20" y2="30" />
+      <line class="figure-stroke" x1="30" y1="34" x2="38" y2="36" />
+      <line class="figure-stroke" x1="32" y1="41" x2="27" y2="56" />
+      <line class="figure-stroke" x1="32" y1="41" x2="37" y2="56" />
+    </g>
+    <!-- ATTACK frame 3 -->
+    <g id="attack-f3" transform="translate(192 192)">
+      <circle class="figure-stroke" cx="35" cy="23" r="6" />
+      <line class="figure-stroke" x1="35" y1="29" x2="32" y2="41" />
+      <line class="figure-stroke" x1="35" y1="34" x2="47" y2="32" />
+      <line class="figure-stroke" x1="35" y1="34" x2="28" y2="38" />
+      <line class="figure-stroke" x1="32" y1="41" x2="27" y2="56" />
+      <line class="figure-stroke" x1="32" y1="41" x2="38" y2="56" />
+    </g>
+    <!-- ATTACK frame 4 -->
+    <g id="attack-f4" transform="translate(256 192)">
+      <circle class="figure-stroke" cx="36" cy="24" r="6" />
+      <line class="figure-stroke" x1="36" y1="30" x2="32" y2="41" />
+      <line class="figure-stroke" x1="36" y1="34" x2="49" y2="35" />
+      <line class="figure-stroke" x1="36" y1="34" x2="30" y2="39" />
+      <line class="figure-stroke" x1="32" y1="41" x2="28" y2="56" />
+      <line class="figure-stroke" x1="32" y1="41" x2="39" y2="56" />
+    </g>
+    <!-- ATTACK frame 5 -->
+    <g id="attack-f5" transform="translate(320 192)">
+      <circle class="figure-stroke" cx="33" cy="23" r="6" />
+      <line class="figure-stroke" x1="33" y1="29" x2="32" y2="41" />
+      <line class="figure-stroke" x1="33" y1="34" x2="27" y2="39" />
+      <line class="figure-stroke" x1="33" y1="34" x2="41" y2="36" />
+      <line class="figure-stroke" x1="32" y1="41" x2="28" y2="56" />
+      <line class="figure-stroke" x1="32" y1="41" x2="36" y2="56" />
+    </g>
+  </g>
+
+  <text class="sheet-label" x="18" y="4">IDLE (row 0, 4f, 200ms)</text>
+  <text class="sheet-label" x="18" y="68">WALK (row 1, 8f, 80ms)</text>
+  <text class="sheet-label" x="18" y="132">JUMP (row 2, 6f, 90ms, one-shot)</text>
+  <text class="sheet-label" x="18" y="196">ATTACK (row 3, 6f, 60ms, one-shot)</text>
+</svg>

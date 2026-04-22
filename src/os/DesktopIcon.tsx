@@ -2,6 +2,7 @@ interface Props {
   icon: string;
   label: string;
   selected: boolean;
+  openOnClick?: boolean;
   onSelect: () => void;
   onOpen: () => void;
   onContextMenu: (e: React.MouseEvent) => void;
@@ -11,6 +12,7 @@ export default function DesktopIcon({
   icon,
   label,
   selected,
+  openOnClick = false,
   onSelect,
   onOpen,
   onContextMenu,
@@ -26,10 +28,15 @@ export default function DesktopIcon({
       onClick={(e) => {
         e.stopPropagation();
         onSelect();
+        if (openOnClick) {
+          onOpen();
+        }
       }}
       onDoubleClick={(e) => {
         e.stopPropagation();
-        onOpen();
+        if (!openOnClick) {
+          onOpen();
+        }
       }}
       onContextMenu={(e) => {
         e.preventDefault();

@@ -31,15 +31,24 @@ export const useWindows = create<WindowsStore>((set, get) => ({
     const app = APPS[appId];
     const id = makeId();
     const n = get().zOrder.length;
+    const width = app.defaultSize.width;
+    const height = app.defaultSize.height;
+    const appWindowCount = Object.values(get().windows).filter((win) => win.appId === appId).length;
+    const spawnPosition = app.getSpawnPosition?.({
+      appWindowCount,
+      totalWindowCount: n,
+      viewportWidth: globalThis.window?.innerWidth ?? width,
+      viewportHeight: (globalThis.window?.innerHeight ?? height) - TASKBAR_HEIGHT,
+    });
     const state: WindowState = {
       id,
       appId,
       title: app.title,
       icon: app.icon,
-      x: 60 + (n % 8) * 28,
-      y: 40 + (n % 8) * 28,
-      width: app.defaultSize.width,
-      height: app.defaultSize.height,
+      x: spawnPosition?.x ?? 60 + (n % 8) * 28,
+      y: spawnPosition?.y ?? 40 + (n % 8) * 28,
+      width,
+      height,
       isMinimized: false,
       isMaximized: false,
     };

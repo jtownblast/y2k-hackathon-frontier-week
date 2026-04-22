@@ -2,6 +2,7 @@ import { type ReactNode, useRef } from 'react';
 import { Rnd } from 'react-rnd';
 import { useWindows, TASKBAR_HEIGHT } from './useWindows';
 import type { WindowState } from './types';
+import { APPS } from '../apps/registry';
 
 interface Props {
   window: WindowState;
@@ -16,6 +17,14 @@ const MIN_HEIGHT = 140;
 export default function Window({ window: win, zIndex, focused, children }: Props) {
   const { focusWindow, closeWindow, moveWindow, resizeWindow, minimizeWindow, toggleMaximize } =
     useWindows();
+  const app = APPS[win.appId];
+  const windowOptions = app.window;
+  const minWidth = windowOptions?.minWidth ?? MIN_WIDTH;
+  const minHeight = windowOptions?.minHeight ?? MIN_HEIGHT;
+  const resizable = windowOptions?.resizable ?? true;
+  const showMinimize = windowOptions?.showMinimize ?? true;
+  const showMaximize = windowOptions?.showMaximize ?? true;
+  const showBody = windowOptions?.showBody ?? true;
 
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
 
@@ -26,6 +35,10 @@ export default function Window({ window: win, zIndex, focused, children }: Props
   };
 
   const handleTitleBarDoubleClick = (e: React.MouseEvent) => {
+    if (!showMaximize) {
+      return;
+    }
+
     if ((e.target as HTMLElement).closest('.title-bar-controls')) return;
     toggleMaximize(win.id);
   };
@@ -34,12 +47,12 @@ export default function Window({ window: win, zIndex, focused, children }: Props
     <Rnd
       position={{ x: win.x, y: win.y }}
       size={{ width: win.width, height: win.height }}
-      minWidth={MIN_WIDTH}
-      minHeight={MIN_HEIGHT}
+      minWidth={minWidth}
+      minHeight={minHeight}
       bounds="parent"
       dragHandleClassName="title-bar"
       disableDragging={win.isMaximized}
-      enableResizing={!win.isMaximized}
+      enableResizing={!win.isMaximized && resizable}
       onDragStart={(_e, d) => {
         dragStartRef.current = { x: d.x, y: d.y };
         focusWindow(win.id);
@@ -84,22 +97,26 @@ export default function Window({ window: win, zIndex, focused, children }: Props
             <span>{win.title}</span>
           </div>
           <div className="title-bar-controls">
-            <button
-              aria-label="Minimize"
-              onMouseDown={stopDrag}
-              onClick={(e) => {
-                e.stopPropagation();
-                minimizeWindow(win.id);
-              }}
-            />
-            <button
-              aria-label={win.isMaximized ? 'Restore' : 'Maximize'}
-              onMouseDown={stopDrag}
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleMaximize(win.id);
-              }}
-            />
+            {showMinimize && (
+              <button
+                aria-label="Minimize"
+                onMouseDown={stopDrag}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  minimizeWindow(win.id);
+                }}
+              />
+            )}
+            {showMaximize && (
+              <button
+                aria-label={win.isMaximized ? 'Restore' : 'Maximize'}
+                onMouseDown={stopDrag}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleMaximize(win.id);
+                }}
+              />
+            )}
             <button
               aria-label="Close"
               onMouseDown={stopDrag}
@@ -110,12 +127,14 @@ export default function Window({ window: win, zIndex, focused, children }: Props
             />
           </div>
         </div>
-        <div
-          className="window-body"
-          style={{ flex: 1, overflow: 'auto', margin: 0, padding: 0 }}
-        >
-          {children}
-        </div>
+        {showBody && (
+          <div
+            className="window-body"
+            style={{ flex: 1, overflow: 'auto', margin: 0, padding: 0 }}
+          >
+            {children}
+          </div>
+        )}
       </div>
     </Rnd>
   );

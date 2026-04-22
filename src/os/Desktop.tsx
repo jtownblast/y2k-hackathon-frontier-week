@@ -95,6 +95,7 @@ export default function Desktop() {
               icon={app.icon}
               label={app.title}
               selected={selected === appId}
+              openOnClick={app.launchOnClick}
               onSelect={() => setSelected(appId)}
               onOpen={() => openWindow(appId)}
               onContextMenu={(e) =>
