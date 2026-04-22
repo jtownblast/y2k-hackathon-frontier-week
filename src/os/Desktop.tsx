@@ -19,6 +19,7 @@ export default function Desktop() {
   const openWindow = useWindows((s) => s.openWindow);
   const closeStartMenu = useOS((s) => s.closeStartMenu);
   const startMenuOpen = useOS((s) => s.startMenuOpen);
+  const wallpaper = useOS((s) => s.wallpaper);
 
   const clearAll = () => {
     setSelected(null);
@@ -65,7 +66,12 @@ export default function Desktop() {
       style={{
         position: 'fixed',
         inset: 0,
-        background: '#008080',
+        backgroundColor: '#008080',
+        backgroundImage: wallpaper ? `url(${wallpaper.src})` : undefined,
+        backgroundSize: wallpaper?.mode === 'fit' ? 'cover' : 'auto',
+        backgroundRepeat: wallpaper?.mode === 'tiled' ? 'repeat' : 'no-repeat',
+        backgroundPosition: 'center center',
+        imageRendering: 'pixelated',
         overflow: 'hidden',
       }}
     >
