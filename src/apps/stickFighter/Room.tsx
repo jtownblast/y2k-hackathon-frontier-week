@@ -6,7 +6,9 @@ import { useStickFighterKeys } from './keyboard';
 
 export default function Room() {
   const rootRef = useRef<HTMLDivElement>(null);
+  // Forwarded to <Stage>; the animation renderer (upcoming PR) will read this imperatively.
   const stageRef = useRef<HTMLDivElement>(null);
+  const copyTimeoutRef = useRef<number | null>(null);
 
   const roomId = useStickFighter((s) => s.roomId);
   const playerCount = useStickFighter((s) => s.playerCount);
@@ -20,14 +22,32 @@ export default function Room() {
     rootRef.current?.focus();
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current !== null) {
+        window.clearTimeout(copyTimeoutRef.current);
+      }
+    };
+  }, []);
+
   useStickFighterKeys(rootRef, emitInput);
+
+  const flashCopied = useCallback(() => {
+    setCopied(true);
+    if (copyTimeoutRef.current !== null) {
+      window.clearTimeout(copyTimeoutRef.current);
+    }
+    copyTimeoutRef.current = window.setTimeout(() => {
+      setCopied(false);
+      copyTimeoutRef.current = null;
+    }, 1500);
+  }, []);
 
   const handleCopy = useCallback(async () => {
     if (!roomId) return;
     try {
       await navigator.clipboard.writeText(roomId);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1500);
+      flashCopied();
     } catch {
       // Clipboard can fail in insecure contexts; fall back to a selection.
       const ta = document.createElement('textarea');
@@ -36,10 +56,9 @@ export default function Room() {
       ta.select();
       document.execCommand('copy');
       document.body.removeChild(ta);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1500);
+      flashCopied();
     }
-  }, [roomId]);
+  }, [roomId, flashCopied]);
 
   if (!roomId) return null; // Parent should not render Room without a roomId.
 
