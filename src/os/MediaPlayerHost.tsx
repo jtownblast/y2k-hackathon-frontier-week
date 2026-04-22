@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { registerAudioElement } from './mediaHost';
 import { useFiles } from './useFiles';
+import { useWindows } from './useWindows';
 import { useMediaPlayer } from '../apps/windowsMediaPlayer/state';
 
 export default function MediaPlayerHost() {
@@ -19,6 +20,26 @@ export default function MediaPlayerHost() {
     return () => registerAudioElement(null);
   }, []);
 
+  // Stop playback when the last WMP window is closed.
+  const windows = useWindows((s) => s.windows);
+  const wmpOpen = Object.values(windows).some(
+    (w) => w.appId === 'windows-media-player',
+  );
+  useEffect(() => {
+    if (!wmpOpen) {
+      useMediaPlayer.getState().stop();
+    }
+  }, [wmpOpen]);
+
+  // Auto-load the first library track when WMP opens with nothing loaded.
+  useEffect(() => {
+    if (!wmpOpen) return;
+    const { currentTrackId: cid, loadTrack } = useMediaPlayer.getState();
+    if (cid) return; // already has a track
+    const lib = useFiles.getState().musicLibrary;
+    if (lib.length > 0) loadTrack(lib[0].id);
+  }, [wmpOpen]);
+
   // Load src when track changes.
   useEffect(() => {
     const a = ref.current;
@@ -28,7 +49,6 @@ export default function MediaPlayerHost() {
       a.load();
       return;
     }
-    // Resolve to absolute URL to match what the browser stores in `a.src`.
     const targetSrc = new URL(track.src, window.location.origin).href;
     if (a.src !== targetSrc) {
       a.src = track.src;
