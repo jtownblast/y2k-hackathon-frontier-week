@@ -3,6 +3,7 @@ import { useOS } from './os/useOS';
 import BootScreen from './os/BootScreen';
 import Desktop from './os/Desktop';
 import ShutDownScreen from './os/ShutDownScreen';
+import MediaPlayerHost from './os/MediaPlayerHost';
 
 export default function App() {
   const booted = useOS((s) => s.booted);
@@ -29,6 +30,7 @@ export default function App() {
       }}
     >
       <Desktop />
+      <MediaPlayerHost />
     </div>
   );
 }

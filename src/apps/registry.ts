@@ -30,7 +30,7 @@ export const APPS: Record<AppId, AppDefinition> = {
   'paint':                { title: 'Paint',                icon: paintIcon,      component: Paint,              defaultSize: { width: 640, height: 480 } },
   'limewire':             { title: 'LimeWire',             icon: limewireIcon,   component: Limewire,           defaultSize: { width: 560, height: 400 } },
   'internet-explorer':    { title: 'Internet Explorer',    icon: ieIcon,         component: InternetExplorer,   defaultSize: { width: 640, height: 440 } },
-  'windows-media-player': { title: 'Windows Media Player', icon: wmpIcon,        component: WindowsMediaPlayer, defaultSize: { width: 400, height: 300 } },
+  'windows-media-player': { title: 'Windows Media Player', icon: wmpIcon,        component: WindowsMediaPlayer, defaultSize: { width: 620, height: 400 } },
   'stick-fighter':        { title: 'Stick Fighter',        icon: stickFighterIcon, component: StickFighter,       defaultSize: { width: 640, height: 480 } },
 };
 
