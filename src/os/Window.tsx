@@ -1,0 +1,122 @@
+import { type ReactNode, useRef } from 'react';
+import { Rnd } from 'react-rnd';
+import { useWindows, TASKBAR_HEIGHT } from './useWindows';
+import type { WindowState } from './types';
+
+interface Props {
+  window: WindowState;
+  zIndex: number;
+  focused: boolean;
+  children: ReactNode;
+}
+
+const MIN_WIDTH = 240;
+const MIN_HEIGHT = 140;
+
+export default function Window({ window: win, zIndex, focused, children }: Props) {
+  const { focusWindow, closeWindow, moveWindow, resizeWindow, minimizeWindow, toggleMaximize } =
+    useWindows();
+
+  const dragStartRef = useRef<{ x: number; y: number } | null>(null);
+
+  if (win.isMinimized) return null;
+
+  const stopDrag = (e: React.MouseEvent | React.PointerEvent) => {
+    e.stopPropagation();
+  };
+
+  const handleTitleBarDoubleClick = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest('.title-bar-controls')) return;
+    toggleMaximize(win.id);
+  };
+
+  return (
+    <Rnd
+      position={{ x: win.x, y: win.y }}
+      size={{ width: win.width, height: win.height }}
+      minWidth={MIN_WIDTH}
+      minHeight={MIN_HEIGHT}
+      bounds="parent"
+      dragHandleClassName="title-bar"
+      disableDragging={win.isMaximized}
+      enableResizing={!win.isMaximized}
+      onDragStart={(_e, d) => {
+        dragStartRef.current = { x: d.x, y: d.y };
+        focusWindow(win.id);
+      }}
+      onDragStop={(_e, d) => {
+        const start = dragStartRef.current;
+        dragStartRef.current = null;
+        if (start && start.x === d.x && start.y === d.y) return;
+        const maxY = (globalThis.window.innerHeight ?? 0) - TASKBAR_HEIGHT - 24;
+        moveWindow(win.id, Math.max(0, d.x), Math.min(Math.max(0, d.y), Math.max(0, maxY)));
+      }}
+      onResizeStop={(_e, _dir, ref, _delta, position) => {
+        resizeWindow(
+          win.id,
+          position.x,
+          position.y,
+          ref.offsetWidth,
+          ref.offsetHeight,
+        );
+      }}
+      style={{ zIndex, display: 'flex', flexDirection: 'column' }}
+      onMouseDown={() => focusWindow(win.id)}
+    >
+      <div
+        className="window"
+        style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}
+      >
+        <div
+          className={`title-bar${focused ? '' : ' inactive'}`}
+          onDoubleClick={handleTitleBarDoubleClick}
+          style={{ cursor: win.isMaximized ? 'default' : 'move' }}
+        >
+          <div className="title-bar-text" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <img
+              src={win.icon}
+              alt=""
+              width={16}
+              height={16}
+              style={{ display: 'block' }}
+              draggable={false}
+            />
+            <span>{win.title}</span>
+          </div>
+          <div className="title-bar-controls">
+            <button
+              aria-label="Minimize"
+              onMouseDown={stopDrag}
+              onClick={(e) => {
+                e.stopPropagation();
+                minimizeWindow(win.id);
+              }}
+            />
+            <button
+              aria-label={win.isMaximized ? 'Restore' : 'Maximize'}
+              onMouseDown={stopDrag}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleMaximize(win.id);
+              }}
+            />
+            <button
+              aria-label="Close"
+              onMouseDown={stopDrag}
+              onClick={(e) => {
+                e.stopPropagation();
+                closeWindow(win.id);
+              }}
+            />
+          </div>
+        </div>
+        <div
+          className="window-body"
+          style={{ flex: 1, overflow: 'auto', margin: 0, padding: 0 }}
+        >
+          {children}
+        </div>
+      </div>
+    </Rnd>
+  );
+}
