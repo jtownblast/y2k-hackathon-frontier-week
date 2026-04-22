@@ -38,6 +38,16 @@ npm run build     # type-check + production build to dist/
 npm run preview   # preview the production build locally
 ```
 
+## Multiplayer (PartyKit)
+
+`npm run dev` starts Vite and `partykit dev` together for the current PoC.
+
+On the first load without a `?room=` query param, the app generates an 8-character room key and updates the URL in place. For a quick smoke test, open that URL in a second tab and move the stick figure in one tab to confirm the remote player appears in the other.
+
+The current sync payload now carries each player's action, facing, and animation frame as well as position, so a remote peer mirrors idle, walk, jump, and attack poses from the latest snapshot without adding interpolation, prediction, or changes to the local physics/control loop.
+
+An explicit "Start a Room" button is deferred for now; the current flow relies on auto-generated room URLs.
+
 ## Project structure
 
 ```

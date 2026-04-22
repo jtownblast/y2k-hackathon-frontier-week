@@ -5,7 +5,8 @@ export type AppId =
   | 'limewire'
   | 'internet-explorer'
   | 'windows-media-player'
-  | 'stick-fighter';
+  | 'stick-fighter'
+  | 'platform';
 
 export interface WindowBounds {
   x: number;
