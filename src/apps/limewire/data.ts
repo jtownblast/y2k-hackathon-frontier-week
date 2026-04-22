@@ -15,6 +15,31 @@ export interface SearchResult {
 }
 
 export const SEED_RESULTS: SearchResult[] = [
+  // ── Real tracks (The Killers, Britney, Radiohead) ────────────
+  {
+    id: 'real_brightside',
+    filename: 'the_killers_mr_brightside_OFFICIAL.mp3',
+    size: '6.5 MB', type: 'Audio', speed: 'T1', quality: 5,
+    bitrate: '192 kbps', length: '3:42', seeds: 1204,
+    isVirus: false, realFile: '/music/mr_brightside.mp3',
+    title: 'Mr. Brightside', artist: 'The Killers',
+  },
+  {
+    id: 'real_toxic',
+    filename: 'britney_spears_toxic_HD_OFFICIAL.mp3',
+    size: '6.7 MB', type: 'Audio', speed: 'T1', quality: 5,
+    bitrate: '192 kbps', length: '3:20', seeds: 987,
+    isVirus: false, realFile: '/music/toxic.mp3',
+    title: 'Toxic', artist: 'Britney Spears',
+  },
+  {
+    id: 'real_creep',
+    filename: 'radiohead_creep_ORIGINAL.mp3',
+    size: '7.7 MB', type: 'Audio', speed: 'Cable', quality: 5,
+    bitrate: '192 kbps', length: '3:58', seeds: 2341,
+    isVirus: false, realFile: '/music/creep.mp3',
+    title: 'Creep', artist: 'Radiohead',
+  },
   // ── Legit audio ──────────────────────────────────────────────
   {
     id: 'r1',
