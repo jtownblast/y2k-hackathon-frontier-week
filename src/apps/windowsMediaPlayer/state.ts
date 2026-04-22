@@ -108,10 +108,17 @@ export const useMediaPlayer = create<MediaPlayerStore>((set, get) => ({
     const audio = getAudioElement();
     if (!audio) return;
     ensureAudioGraph();
-    void resumeAudioContext().then(() => {
-      audio.play().catch(() => {
-        set({ isPlaying: false });
-      });
+    // Call audio.play() directly — callers (Controls, NowPlaying) already
+    // call ensureAudioGraph + resumeAudioContext before invoking play(), so
+    // the AudioContext is running by the time we get here. Calling play()
+    // inside a second .then() would put audio.play() two Promise levels deep,
+    // which some browsers treat as outside the user-gesture window.
+    void audio.play().catch(() => {
+      // Fallback for non-gesture callers (track-end, pendingTrack effect):
+      // resume context then retry.
+      void resumeAudioContext().then(() =>
+        audio.play().catch(() => set({ isPlaying: false })),
+      );
     });
     set({ isPlaying: true });
   },
