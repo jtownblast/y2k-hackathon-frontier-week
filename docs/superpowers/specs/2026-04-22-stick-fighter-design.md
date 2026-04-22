@@ -48,20 +48,20 @@ The animation templates (`stickfigure_*_template.svg`) and the PartyKit server (
 ### Room view (`roomId !== null`)
 
 ```
-┌─ Stick Fighter — Room: abc123 ──────── [_][□][X] ─┐
-│  Room: abc123    [ Copy ID ]    [ Leave ]         │
-├───────────────────────────────────────────────────┤
-│                                                   │
-│           (empty stage — animations               │
-│            will render here after                 │
-│            the other PR merges)                   │
-│                                                   │
-├───────────────────────────────────────────────────┤
-│  Controls: W A S D · Space · K       Players: 1   │
-└───────────────────────────────────────────────────┘
+┌─ Stick Fighter ──────────────────────── [_][□][X] ─┐
+│  Room: abc123    [ Copy ID ]    [ Leave ]          │
+├────────────────────────────────────────────────────┤
+│                                                    │
+│            (empty stage — animations               │
+│             will render here after                 │
+│             the other PR merges)                   │
+│                                                    │
+├────────────────────────────────────────────────────┤
+│  Controls: W A S D · Space · K        Players: 1   │
+└────────────────────────────────────────────────────┘
 ```
 
-- Window title reflects the room ID (`Stick Fighter — Room: abc123`).
+- Window chrome title stays "Stick Fighter" (from the static registry entry — the OS reads `APPS[appId].title` into `WindowState` at launch). The room ID lives in the in-app header bar only.
 - **Copy ID** writes the room ID to `navigator.clipboard`; shows a transient "Copied!" indicator.
 - **Leave** returns to the Lobby and clears state.
 - The stage is an empty bordered `<div>` that exposes a ref for the animation layer to attach to.
@@ -115,13 +115,14 @@ Two seams for the future animation/server branch to plug into:
 
 ### Keyboard handling
 
-`keyboard.ts` exports `useStickFighterKeys(onInput: (e: InputEvent) => void)`:
+`keyboard.ts` exports `useStickFighterKeys(rootRef, onInput)`:
 
-- Listens on `document`, but **only dispatches if the Stick Fighter root element contains `document.activeElement`** (same pattern used in `src/apps/paint/index.tsx` for Ctrl+Z). This keeps WASD out of Paint, notes, etc.
+- Attaches `keydown` / `keyup` handlers via React on the Room's root `<div>`, which is rendered with `tabIndex={0}` and auto-focused on mount. This scopes input to the Stick Fighter window natively — click another app's window, focus leaves, keys stop firing. No document-level listeners, no manual `document.activeElement` checks.
 - `keydown` repeats are suppressed (`e.repeat` guard) so a held key sends one `pressed: true`.
 - `keyup` sends `pressed: false` for movement keys; jump/punch fire once on keydown.
 - Key map: `W` → up, `A` → left, `S` → down, `D` → right, `Space` → jump, `K` → punch.
-- Unmounts cleanly on leave/close.
+- `e.preventDefault()` on Space so the page doesn't scroll.
+- Cleanly detached on unmount (React handles this automatically for JSX listeners).
 
 ### Room ID
 
