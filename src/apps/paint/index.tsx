@@ -4,6 +4,9 @@ import ColorPalette from './ColorPalette';
 import MenuBar, { type MenuDef } from './MenuBar';
 import StatusBar from './StatusBar';
 import Toolbox from './Toolbox';
+import AIGenerateModal from './AIGenerateModal';
+import { useOS } from '../../os/useOS';
+import type { WallpaperMode } from '../../os/useOS';
 
 const DEFAULT_CANVAS_WIDTH = 600;
 const DEFAULT_CANVAS_HEIGHT = 425;
@@ -19,9 +22,21 @@ export default function Paint() {
     width: DEFAULT_CANVAS_WIDTH,
     height: DEFAULT_CANVAS_HEIGHT,
   });
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiSketch, setAiSketch] = useState<string | null>(null);
 
   const call = <K extends keyof CanvasHandle>(method: K) =>
     () => canvasRef.current?.[method]();
+
+  const openAI = useCallback(() => {
+    setAiSketch(canvasRef.current?.exportDataUrl() ?? null);
+    setAiOpen(true);
+  }, []);
+
+  const applyCanvasAsWallpaper = useCallback((mode: WallpaperMode) => {
+    const snap = canvasRef.current?.exportDataUrl();
+    if (snap) useOS.getState().setWallpaper(snap, mode);
+  }, []);
 
   // Keyboard shortcuts (Ctrl+Z / Ctrl+Y / Ctrl+S / Delete)
   useEffect(() => {
@@ -74,8 +89,9 @@ export default function Paint() {
         { divider: true },
         { label: 'Send...', disabled: true },
         { divider: true },
-        { label: 'Set As Wallpaper (Tiled)', disabled: true },
-        { label: 'Set As Wallpaper (Centered)', disabled: true },
+        { label: 'Set As Wallpaper (Fit)', onClick: () => applyCanvasAsWallpaper('fit') },
+        { label: 'Set As Wallpaper (Tiled)', onClick: () => applyCanvasAsWallpaper('tiled') },
+        { label: 'Set As Wallpaper (Centered)', onClick: () => applyCanvasAsWallpaper('centered') },
         { divider: true },
         { label: 'Exit', shortcut: 'Alt+F4', disabled: true },
       ],
@@ -120,6 +136,8 @@ export default function Paint() {
         { label: 'Attributes...', shortcut: 'Ctrl+E', disabled: true },
         { label: 'Clear Image', shortcut: 'Ctrl+Shft+N', onClick: call('clear') },
         { label: 'Draw Opaque', disabled: true },
+        { divider: true },
+        { label: 'Generate with AI...', onClick: openAI },
       ],
     },
     {
@@ -161,7 +179,7 @@ export default function Paint() {
           minHeight: 0,
         }}
       >
-        <Toolbox onHint={handleHint} />
+        <Toolbox onHint={handleHint} onAIGenerate={openAI} />
         <div
           style={{
             flex: 1,
@@ -186,6 +204,13 @@ export default function Paint() {
         cursor={cursor}
         canvasSize={canvasSize}
       />
+
+      {aiOpen && (
+        <AIGenerateModal
+          sketchDataUrl={aiSketch}
+          onClose={() => setAiOpen(false)}
+        />
+      )}
     </div>
   );
 }

@@ -16,6 +16,7 @@ export interface CanvasHandle {
   redo: () => void;
   invertColors: () => void;
   deleteSelection: () => void;
+  exportDataUrl: () => string | null;
 }
 
 interface Props {
@@ -250,6 +251,7 @@ const Canvas = forwardRef<CanvasHandle, Props>(function Canvas(
         stopAnts();
         clearOverlay();
       },
+      exportDataUrl: () => mainRef.current?.toDataURL('image/png') ?? null,
     }),
     [width, height, pushUndo, snapshot, restore],
   );
