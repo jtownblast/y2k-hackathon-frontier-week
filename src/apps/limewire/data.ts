@@ -12,6 +12,7 @@ export interface SearchResult {
   realFile: string | null;
   title?: string;
   artist?: string;
+  downloadMs?: number; // override download duration in ms
 }
 
 export const SEED_RESULTS: SearchResult[] = [
@@ -39,6 +40,64 @@ export const SEED_RESULTS: SearchResult[] = [
     bitrate: '192 kbps', length: '3:58', seeds: 2341,
     isVirus: false, realFile: '/music/creep.mp3',
     title: 'Creep', artist: 'Radiohead',
+    downloadMs: 12000,
+  },
+  // ── Creep alternate results ───────────────────────────────────
+  {
+    id: 'creep_live',
+    filename: 'radiohead_creep_LIVE_Glastonbury_1993_bootleg.mp3',
+    size: '8.2 MB', type: 'Audio', speed: 'DSL', quality: 4,
+    bitrate: '128 kbps', length: '5:14', seeds: 445,
+    isVirus: false, realFile: '/music/creep.mp3',
+    title: 'Creep (Live Glastonbury 1993)', artist: 'Radiohead',
+  },
+  {
+    id: 'creep_piano',
+    filename: 'creep_piano_cover_by_pianogirl2003.mp3',
+    size: '2.3 MB', type: 'Audio', speed: 'Modem', quality: 2,
+    bitrate: '96 kbps', length: '4:12', seeds: 17,
+    isVirus: false, realFile: '/music/creep.mp3',
+    title: 'Creep (Piano Cover)', artist: 'pianogirl2003',
+  },
+  {
+    id: 'creep_video',
+    filename: 'radiohead_creep_music_video_VHSrip.avi',
+    size: '87.3 MB', type: 'Video', speed: 'T1', quality: 3,
+    bitrate: '--', length: '3:59', seeds: 132,
+    isVirus: false, realFile: '/music/creep.mp3',
+    title: 'Creep (Music Video VHS Rip)', artist: 'Radiohead',
+  },
+  {
+    id: 'creep_karaoke',
+    filename: 'creep_KARAOKE_instrumental_backing_track.mp3',
+    size: '4.8 MB', type: 'Audio', speed: 'DSL', quality: 2,
+    bitrate: '128 kbps', length: '3:58', seeds: 28,
+    isVirus: false, realFile: '/music/creep.mp3',
+    title: 'Creep (Karaoke Version)', artist: 'Sing Along Hits',
+  },
+  {
+    id: 'creep_midi',
+    filename: 'creep_radiohead_NOKIA_ringtone.mid',
+    size: '18 KB', type: 'Audio', speed: 'Modem', quality: 1,
+    bitrate: '--', length: '0:38', seeds: 302,
+    isVirus: false, realFile: '/music/creep.mp3',
+    title: 'Creep (Nokia Ringtone)', artist: 'Unknown',
+  },
+  {
+    id: 'creep_shrek',
+    filename: 'what_if_shrek_sang_creep_radiohead_parody.mp3',
+    size: '5.5 MB', type: 'Audio', speed: 'Cable', quality: 3,
+    bitrate: '128 kbps', length: '4:03', seeds: 512,
+    isVirus: false, realFile: '/music/creep.mp3',
+    title: 'What if Shrek Sang Creep', artist: 'shrek_is_love_2003',
+  },
+  {
+    id: 'creep_acoustic',
+    filename: 'radiohead_creep_acoustic_demo_unreleased_REAL.mp3',
+    size: '6.1 MB', type: 'Audio', speed: 'Cable', quality: 3,
+    bitrate: '128 kbps', length: '4:07', seeds: 76,
+    isVirus: false, realFile: '/music/creep.mp3',
+    title: 'Creep (Acoustic Demo - Unreleased)', artist: 'Radiohead',
   },
   // ── Legit audio ──────────────────────────────────────────────
   {

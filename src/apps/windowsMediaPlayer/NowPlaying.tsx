@@ -43,25 +43,41 @@ export default function NowPlaying() {
       }}
     >
       {/* Album art */}
-      <div
-        style={{
-          width: '100%',
-          aspectRatio: '1 / 1',
-          background: `linear-gradient(135deg, hsl(${artHue} 80% 55%) 0%, hsl(${(artHue + 50) % 360} 70% 25%) 100%)`,
-          border: '1px solid #000',
-          boxShadow: 'inset 0 0 14px rgba(0,0,0,0.55)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'rgba(255,255,255,0.45)',
-          fontSize: 28,
-          fontWeight: 800,
-          textShadow: '0 1px 2px rgba(0,0,0,0.6)',
-          flexShrink: 0,
-        }}
-      >
-        {track ? track.title.slice(0, 1).toUpperCase() : '♪'}
-      </div>
+      {track?.coverArt ? (
+        <img
+          src={track.coverArt}
+          alt={`${track.title} cover`}
+          style={{
+            width: '100%',
+            aspectRatio: '1 / 1',
+            objectFit: 'cover',
+            border: '1px solid #000',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.6)',
+            flexShrink: 0,
+            display: 'block',
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            width: '100%',
+            aspectRatio: '1 / 1',
+            background: `linear-gradient(135deg, hsl(${artHue} 80% 55%) 0%, hsl(${(artHue + 50) % 360} 70% 25%) 100%)`,
+            border: '1px solid #000',
+            boxShadow: 'inset 0 0 14px rgba(0,0,0,0.55)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'rgba(255,255,255,0.45)',
+            fontSize: 28,
+            fontWeight: 800,
+            textShadow: '0 1px 2px rgba(0,0,0,0.6)',
+            flexShrink: 0,
+          }}
+        >
+          {track ? track.title.slice(0, 1).toUpperCase() : '♪'}
+        </div>
+      )}
 
       {/* Track info */}
       <div style={{ flexShrink: 0 }}>

@@ -6,6 +6,7 @@ export interface Track {
   filename: string;
   title: string;
   artist: string;
+  coverArt?: string;
   duration?: number;
   addedAt: number;
 }
@@ -32,6 +33,7 @@ const SEED_TRACKS: Track[] = [
     filename: 'the_killers_mr_brightside_OFFICIAL.mp3',
     title: 'Mr. Brightside',
     artist: 'The Killers',
+    coverArt: '/covers/mr_brightside.svg',
     addedAt: 0,
   },
   {
@@ -40,6 +42,7 @@ const SEED_TRACKS: Track[] = [
     filename: 'britney_spears_toxic_HD_OFFICIAL.mp3',
     title: 'Toxic',
     artist: 'Britney Spears',
+    coverArt: '/covers/toxic.svg',
     addedAt: 0,
   },
   {
@@ -48,6 +51,7 @@ const SEED_TRACKS: Track[] = [
     filename: 'radiohead_creep_ORIGINAL.mp3',
     title: 'Creep',
     artist: 'Radiohead',
+    coverArt: '/covers/creep.svg',
     addedAt: 0,
   },
 ];
@@ -63,6 +67,7 @@ export const useFiles = create<FilesStore>((set) => ({
       filename: track.filename,
       title: track.title,
       artist: track.artist,
+      coverArt: track.coverArt,
       duration: track.duration,
       addedAt: Date.now(),
     };

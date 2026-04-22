@@ -1,5 +1,5 @@
 import { useLimewire } from './state';
-import type { TabId } from './state';
+import type { TabId, Download } from './state';
 import Search from './Search';
 import Library from './Library';
 
@@ -10,46 +10,145 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'tools', label: 'Tools' },
 ];
 
+function DownloadRow({ dl }: { dl: Download }) {
+  const isActive = dl.status === 'downloading';
+  const isDone = dl.status === 'complete';
+
+  return (
+    <tr
+      style={{
+        background: isActive ? '#fffbe6' : 'transparent',
+      }}
+    >
+      <td
+        style={{
+          padding: '3px 6px',
+          maxWidth: 220,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          color: isActive ? '#0a246a' : '#333',
+          fontWeight: isActive ? 700 : 400,
+        }}
+        title={dl.result.filename}
+      >
+        {dl.result.filename}
+      </td>
+      <td style={{ padding: '3px 6px', color: '#555' }}>{dl.result.size}</td>
+      <td style={{ padding: '3px 6px', minWidth: 120 }}>
+        {isActive ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div
+              style={{
+                flex: 1,
+                height: 10,
+                background: '#d4d0c8',
+                border: '1px solid #808080',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  width: `${dl.progress}%`,
+                  height: '100%',
+                  background: 'linear-gradient(90deg, #2a7a2a, #5cb85c)',
+                  transition: 'width 0.1s linear',
+                }}
+              />
+            </div>
+            <span style={{ fontSize: 10, color: '#555', minWidth: 28 }}>
+              {Math.round(dl.progress)}%
+            </span>
+          </div>
+        ) : isDone ? (
+          <span style={{ color: '#007700', fontWeight: 700 }}>✓ Complete</span>
+        ) : (
+          <span style={{ color: '#888' }}>Cancelled</span>
+        )}
+      </td>
+      <td style={{ padding: '3px 6px', color: '#555' }}>{dl.result.speed}</td>
+    </tr>
+  );
+}
+
 function MonitorTab() {
+  const downloads = useLimewire((s) => s.downloads);
+  const active = downloads.filter((d) => d.status === 'downloading');
+  const queued = 0;
+
   return (
     <div
       style={{
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        padding: 16,
+        padding: '12px 12px 8px',
         fontFamily: 'Tahoma, sans-serif',
         fontSize: 11,
         color: '#333',
         background: '#f0efe8',
         gap: 8,
+        overflow: 'hidden',
       }}
     >
       <div style={{ fontWeight: 700, fontSize: 12 }}>Download Monitor</div>
-      <div style={{ display: 'flex', gap: 40 }}>
+      <div style={{ display: 'flex', gap: 40, flexShrink: 0 }}>
         <div>
           <div style={{ color: '#808080', fontSize: 10 }}>ACTIVE</div>
-          <div style={{ fontSize: 24, fontWeight: 700, color: '#0a246a' }}>0</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: active.length > 0 ? '#cc6600' : '#0a246a' }}>
+            {active.length}
+          </div>
         </div>
         <div>
           <div style={{ color: '#808080', fontSize: 10 }}>QUEUED</div>
-          <div style={{ fontSize: 24, fontWeight: 700, color: '#0a246a' }}>0</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: '#0a246a' }}>{queued}</div>
+        </div>
+        <div>
+          <div style={{ color: '#808080', fontSize: 10 }}>COMPLETE</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: '#007700' }}>
+            {downloads.filter((d) => d.status === 'complete').length}
+          </div>
         </div>
         <div>
           <div style={{ color: '#808080', fontSize: 10 }}>HOSTS</div>
-          <div style={{ fontSize: 24, fontWeight: 700, color: '#009900' }}>4,821</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: '#009900' }}>4,821</div>
         </div>
       </div>
+
       <div
         style={{
-          padding: 8,
+          flex: 1,
           background: '#fff',
           border: '1px inset #808080',
-          fontSize: 11,
-          color: '#808080',
+          overflowY: 'auto',
         }}
       >
-        No active transfers.
+        {downloads.length === 0 ? (
+          <div style={{ padding: 8, color: '#808080' }}>No transfers.</div>
+        ) : (
+          <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+            <colgroup>
+              <col style={{ width: '55%' }} />
+              <col style={{ width: '12%' }} />
+              <col style={{ width: '22%' }} />
+              <col style={{ width: '11%' }} />
+            </colgroup>
+            <thead>
+              <tr style={{ background: '#d4d0c8', borderBottom: '1px solid #808080' }}>
+                <th style={{ padding: '2px 6px', textAlign: 'left', fontWeight: 700, fontSize: 10 }}>Filename</th>
+                <th style={{ padding: '2px 6px', textAlign: 'left', fontWeight: 700, fontSize: 10 }}>Size</th>
+                <th style={{ padding: '2px 6px', textAlign: 'left', fontWeight: 700, fontSize: 10 }}>Status</th>
+                <th style={{ padding: '2px 6px', textAlign: 'left', fontWeight: 700, fontSize: 10 }}>Speed</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...downloads].reverse().map((dl) => (
+                <DownloadRow key={dl.id} dl={dl} />
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

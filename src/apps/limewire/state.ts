@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { SearchResult } from './data';
+import { SEED_RESULTS } from './data';
 
 export type TabId = 'search' | 'monitor' | 'library' | 'tools';
 
@@ -31,12 +32,20 @@ interface LimewireStore {
   setActiveDownload: (id: string | null) => void;
 }
 
+const brightsideResult = SEED_RESULTS.find((r) => r.id === 'real_brightside')!;
+const toxicResult = SEED_RESULTS.find((r) => r.id === 'real_toxic')!;
+
+const INITIAL_DOWNLOADS: Download[] = [
+  { id: 'init_brightside', result: brightsideResult, progress: 100, status: 'complete', trackId: 'seed_brightside' },
+  { id: 'init_toxic',      result: toxicResult,      progress: 100, status: 'complete', trackId: 'seed_toxic'      },
+];
+
 export const useLimewire = create<LimewireStore>((set) => ({
   activeTab: 'search',
   searchQuery: '',
   searchType: 'All Types',
   results: [],
-  downloads: [],
+  downloads: INITIAL_DOWNLOADS,
   activeDownloadId: null,
 
   setActiveTab: (tab) => set({ activeTab: tab }),

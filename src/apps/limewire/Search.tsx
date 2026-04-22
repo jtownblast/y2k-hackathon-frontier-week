@@ -45,7 +45,7 @@ export default function Search() {
       const dlId = startDownload(r);
 
       // Simulate download progress to 100, then finalize.
-      const totalMs = 2000 + Math.random() * 2000;
+      const totalMs = r.downloadMs ?? (2000 + Math.random() * 2000);
       const start = Date.now();
       const tick = () => {
         const elapsed = Date.now() - start;
