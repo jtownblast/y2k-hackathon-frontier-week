@@ -31,11 +31,14 @@ export default function MediaPlayerHost() {
     }
   }, [wmpOpen]);
 
-  // Auto-load the first library track when WMP opens with nothing loaded.
+  // Auto-load the first library track when WMP opens with nothing loaded,
+  // but only if nothing is pending (LimeWire will set pendingTrackId itself).
   useEffect(() => {
     if (!wmpOpen) return;
     const { currentTrackId: cid, loadTrack } = useMediaPlayer.getState();
-    if (cid) return; // already has a track
+    if (cid) return;
+    const { pendingTrackId } = useFiles.getState();
+    if (pendingTrackId) return;
     const lib = useFiles.getState().musicLibrary;
     if (lib.length > 0) loadTrack(lib[0].id);
   }, [wmpOpen]);
@@ -71,9 +74,12 @@ export default function MediaPlayerHost() {
   };
 
   return (
+    // crossOrigin="anonymous" is required for createMediaElementSource to work
+    // without throwing a CORS security error once the AudioContext graph is built.
     <audio
       ref={ref}
       preload="auto"
+      crossOrigin="anonymous"
       style={{ display: 'none' }}
       onEnded={onEnded}
       onLoadedMetadata={handleLoadedMetadata}

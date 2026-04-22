@@ -1,3 +1,4 @@
+import { ensureAudioGraph, resumeAudioContext } from '../../os/mediaHost';
 import { useMediaPlayer } from './state';
 
 function fmt(seconds: number): string {
@@ -74,7 +75,14 @@ export default function Controls() {
         color: '#0a1e4a',
       }}
     >
-      <ControlButton title="Play/Pause" onClick={togglePlay}>
+      <ControlButton
+        title="Play/Pause"
+        onClick={() => {
+          // Prime AudioContext synchronously while we're inside the user gesture.
+          ensureAudioGraph();
+          void resumeAudioContext().then(() => togglePlay());
+        }}
+      >
         {isPlaying ? '❙❙' : '▶'}
       </ControlButton>
       <ControlButton title="Stop" onClick={stop}>

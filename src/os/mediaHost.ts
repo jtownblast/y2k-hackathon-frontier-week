@@ -16,24 +16,38 @@ export function getAnalyser(): AnalyserNode | null {
 }
 
 /**
- * Must be invoked from a user gesture. Creates the AudioContext + analyser graph
- * lazily and only once per audio element. A MediaElementAudioSourceNode can only
- * be created ONCE per `<audio>`, so we keep `audioEl` stable for the session.
+ * Call from a user-gesture handler (click, keydown). Creates the AudioContext
+ * and wires analyser → destination. Safe to call multiple times — idempotent
+ * once the graph is built. If a previous attempt failed (sourceNode null),
+ * retries the wiring without recreating the context.
  */
 export function ensureAudioGraph(): void {
-  if (!audioEl || audioCtx) return;
+  if (!audioEl) return;
+
   const Ctor: typeof AudioContext =
     window.AudioContext ??
     (window as unknown as { webkitAudioContext: typeof AudioContext })
       .webkitAudioContext;
   if (!Ctor) return;
-  audioCtx = new Ctor();
-  analyser = audioCtx.createAnalyser();
-  analyser.fftSize = 256;
-  analyser.smoothingTimeConstant = 0.75;
-  sourceNode = audioCtx.createMediaElementSource(audioEl);
-  sourceNode.connect(analyser);
-  analyser.connect(audioCtx.destination);
+
+  if (!audioCtx) {
+    audioCtx = new Ctor();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    analyser.smoothingTimeConstant = 0.75;
+  }
+
+  // Wire source → analyser → destination if not yet done.
+  if (!sourceNode) {
+    try {
+      sourceNode = audioCtx.createMediaElementSource(audioEl);
+      sourceNode.connect(analyser!);
+      analyser!.connect(audioCtx.destination);
+    } catch {
+      // createMediaElementSource can only be called once per element.
+      // If it throws the element is already owned by another context — ignore.
+    }
+  }
 }
 
 export function resumeAudioContext(): Promise<void> {
