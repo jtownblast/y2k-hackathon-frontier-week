@@ -30,6 +30,22 @@ export default function Room() {
     };
   }, []);
 
+  // Re-focus the Room root after any mousedown inside the enclosing OS window
+  // (titlebar drag, chrome buttons, header buttons). Without this, dragging the
+  // window by its titlebar deflects focus and WASD stops reaching the listener
+  // until the user clicks back inside the stage.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const win = root.closest('.window');
+    if (!win) return;
+    const refocus = () => {
+      requestAnimationFrame(() => rootRef.current?.focus());
+    };
+    win.addEventListener('mousedown', refocus);
+    return () => win.removeEventListener('mousedown', refocus);
+  }, []);
+
   useStickFighterKeys(rootRef, emitInput);
 
   const flashCopied = useCallback(() => {
