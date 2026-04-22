@@ -136,35 +136,52 @@ export default function Toolbox({ onHint, onAIGenerate }: Props) {
         onMouseLeave={() => onHint(null)}
         style={{
           width: TOOL_BTN * 2,
-          padding: '4px 2px',
+          height: TOOL_BTN,
+          padding: 0,
+          minWidth: 0,
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 2,
-          background: 'linear-gradient(180deg, #d8d8ff 0%, #a0a0ff 50%, #7070d0 100%)',
+          background: '#c0c0c0',
           border: '1px solid',
-          borderColor: '#fff #404080 #404080 #fff',
+          borderColor: '#fff #808080 #808080 #fff',
           cursor: 'pointer',
           flex: '0 0 auto',
         }}
       >
-        <SparkleIcon />
-        <span style={{ fontSize: 10, fontWeight: 'bold', color: '#000040' }}>AI</span>
+        <WandIcon />
       </button>
     </div>
   );
 }
 
-function SparkleIcon() {
+function WandIcon() {
   return (
-    <svg width={24} height={16} viewBox="0 0 24 16" aria-hidden="true">
-      {/* Chunky sparkle — big star + two smaller satellites, Y2K-ish */}
-      <g fill="#ffff80" stroke="#000040" strokeWidth={0.8} strokeLinejoin="round">
-        <path d="M12 1 L13.5 7 L19 8 L13.5 9 L12 15 L10.5 9 L5 8 L10.5 7 Z" />
-        <path d="M4 3 L4.7 5 L6.5 5.5 L4.7 6 L4 8 L3.3 6 L1.5 5.5 L3.3 5 Z" />
-        <path d="M20 10 L20.7 12 L22.5 12.5 L20.7 13 L20 15 L19.3 13 L17.5 12.5 L19.3 12 Z" />
-      </g>
+    <svg width={32} height={32} viewBox="0 0 16 16" aria-hidden="true" style={{ imageRendering: 'pixelated' }}>
+      {/* wand shaft */}
+      <rect x="9" y="5"  width="1" height="1" fill="#000" />
+      <rect x="8" y="6"  width="1" height="1" fill="#000" />
+      <rect x="7" y="7"  width="1" height="1" fill="#000" />
+      <rect x="6" y="8"  width="1" height="1" fill="#000" />
+      <rect x="5" y="9"  width="1" height="1" fill="#000" />
+      <rect x="4" y="10" width="1" height="1" fill="#000" />
+      <rect x="3" y="11" width="1" height="1" fill="#000" />
+      {/* wand handle highlight */}
+      <rect x="4" y="11" width="1" height="1" fill="#808080" />
+      <rect x="3" y="12" width="1" height="1" fill="#808080" />
+      {/* 4-point star at tip */}
+      <rect x="10" y="2"  width="1" height="3" fill="#000" />
+      <rect x="9"  y="3"  width="3" height="1" fill="#000" />
+      <rect x="10" y="3"  width="1" height="1" fill="#ffff00" />
+      {/* small sparkles */}
+      <rect x="13" y="5"  width="1" height="1" fill="#000" />
+      <rect x="12" y="6"  width="3" height="1" fill="#000" />
+      <rect x="13" y="6"  width="1" height="1" fill="#ffff00" />
+      <rect x="13" y="7"  width="1" height="1" fill="#000" />
+      <rect x="7"  y="3"  width="1" height="1" fill="#000" />
+      <rect x="6"  y="4"  width="3" height="1" fill="#000" />
+      <rect x="7"  y="4"  width="1" height="1" fill="#ffff00" />
+      <rect x="7"  y="5"  width="1" height="1" fill="#000" />
     </svg>
   );
 }
